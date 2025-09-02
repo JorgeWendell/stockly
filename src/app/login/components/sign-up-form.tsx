@@ -38,8 +38,8 @@ const registerSchema = z.object({
     .email({
       message: "Email inválido.",
     }),
-  password: z.string().trim().min(6, {
-    message: "Senha deve ter pelo menos 6 caracteres.",
+  password: z.string().trim().min(8, {
+    message: "Senha deve ter pelo menos 8 caracteres.",
   }),
 });
 
@@ -112,7 +112,11 @@ const SignUpForm = () => {
                 <FormItem>
                   <FormLabel>Senha</FormLabel>
                   <FormControl>
-                    <Input placeholder="Digite sua senha" {...field} />
+                    <Input
+                      placeholder="Digite sua senha"
+                      type="password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
