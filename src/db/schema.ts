@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   pgEnum,
   pgTable,
@@ -25,8 +26,10 @@ export const departmentEnum = pgEnum("department", [
 // Tabela de login
 export const UsersTable = pgTable("users", {
   id: text("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  password: varchar("password", { length: 255 }).notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").notNull(),
+  password: text("password"),
   accessLevel: accessLevelEnum("access_level").notNull().default("operador"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
