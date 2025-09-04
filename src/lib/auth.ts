@@ -35,5 +35,10 @@ export const auth = betterAuth({
     "http://localhost:3000",
     "http://192.168.15.32:3000",
     "http://stockly.adelbr.tech:3001",
+    "https://stockly.adelbr.tech:3001", // HTTPS também
   ],
+  baseURL:
+    process.env.NODE_ENV === "production"
+      ? "http://stockly.adelbr.tech:3001"
+      : "http://localhost:3000",
 });
