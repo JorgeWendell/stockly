@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
 
 import { db } from "@/db";
 import { UsersTable } from "@/db/schema";
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
     const accessLevel = users[0]?.accessLevel ?? null;
     return NextResponse.json({ accessLevel });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Falha ao obter access level" },
       { status: 500 },
