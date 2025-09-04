@@ -14,6 +14,7 @@ const DashboardPage = async () => {
     <div>
       <h1>{session?.user?.name}</h1>
       <h1>{session?.user?.email}</h1>
+      <h1>em produção de relatorios</h1>
     </div>
   );
 };

@@ -1,9 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAction } from "next-safe-action/hooks";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
+import { toast } from "sonner";
 import { z } from "zod";
 
+import { upsertProducts } from "@/actions/upsert-products";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -26,10 +29,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { StocksTable } from "@/db/schema";
 import { authClient } from "@/lib/auth-client";
 
 const productSchema = z
   .object({
+    id: z.string().optional(),
     name: z.string().trim().min(1, "Nome é obrigatório"),
     priceInCents: z.string().min(1, "Preço é obrigatório"),
     quantityAtual: z.string().min(1, "Quantidade atual é obrigatória"),
@@ -50,8 +55,12 @@ const productSchema = z
       path: ["quantityAtual"], // Mostra o erro no campo quantidade atual
     },
   );
+interface UpsertProductFormProps {
+  product?: typeof StocksTable.$inferSelect;
+  onSuccess?: () => void;
+}
 
-const UpsertProductForm = () => {
+const UpsertProductForm = ({ product, onSuccess }: UpsertProductFormProps) => {
   const session = authClient.useSession();
   const [accessLevelApi, setAccessLevelApi] = useState<string>("");
   const userIdFromSession = session.data?.user.id ?? "";
@@ -59,14 +68,34 @@ const UpsertProductForm = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: "",
-      priceInCents: "",
-      quantityAtual: "",
-      quantityMin: "",
-      depto: "geral",
-      dateEntry: new Date(),
-      dateExit: undefined,
-      userId: "",
+      id: product?.id || "",
+      name: product?.nameProduct || "",
+      priceInCents: product ? (product.priceInCents / 100).toString() : "",
+      quantityAtual: product?.quantityAtual?.toString() || "",
+      quantityMin: product?.quantityMin?.toString() || "",
+      depto: product?.depto || "geral",
+      dateEntry: product?.dateEntry || new Date(),
+      dateExit: product?.dateExit || undefined,
+      userId: product?.userId || "",
+    },
+  });
+
+  const upsertProductAction = useAction(upsertProducts, {
+    onSuccess: () => {
+      toast.success(
+        product
+          ? "Produto atualizado com sucesso"
+          : "Produto cadastrado com sucesso",
+      );
+      if (!product) {
+        form.reset(); // Limpa o formulário apenas para novos produtos
+      }
+      onSuccess?.();
+    },
+    onError: () => {
+      toast.error(
+        product ? "Erro ao atualizar produto" : "Erro ao cadastrar produto",
+      );
     },
   });
 
@@ -99,19 +128,18 @@ const UpsertProductForm = () => {
     };
   }, [userIdFromSession]);
   function onSubmit(values: z.infer<typeof productSchema>) {
-    const productData = {
-      ...values,
-      priceInCents: parseInt(values.priceInCents) * 100, // Converte para centavos
-      quantityAtual: parseInt(values.quantityAtual),
-      quantityMin: parseInt(values.quantityMin),
-    };
-    console.log(productData);
+    console.log("=== DEBUG FORMULARIO ===");
+    console.log("Dados do formulário:", values);
+    // Enviar os dados como strings (a action vai converter)
+    upsertProductAction.execute(values);
   }
 
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Adicionar Produto</DialogTitle>
+        <DialogTitle>
+          {product ? "Editar Produto" : "Adicionar Produto"}
+        </DialogTitle>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -298,8 +326,8 @@ const UpsertProductForm = () => {
                     onBlur={field.onBlur}
                     name={field.name}
                     ref={field.ref}
-                    disabled
-                    className="cursor-not-allowed bg-gray-50"
+                    disabled={!product}
+                    className={!product ? "cursor-not-allowed bg-gray-50" : ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -324,7 +352,14 @@ const UpsertProductForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">Adicionar Produto</Button>
+          <Button type="submit" disabled={upsertProductAction.isExecuting}>
+            {product ? "Atualizar Produto" : "Adicionar Produto"}
+          </Button>
+          {upsertProductAction.isExecuting && (
+            <p className="text-muted-foreground text-xs">
+              {product ? "Atualizando produto..." : "Adicionando produto..."}
+            </p>
+          )}
         </form>
       </Form>
     </DialogContent>
