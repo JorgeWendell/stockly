@@ -1,4 +1,6 @@
-import { Button } from "@/components/ui/button";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
 import {
   PageActions,
   PageContainer,
@@ -8,9 +10,17 @@ import {
   PageHeaderContent,
   PageTitle,
 } from "@/components/ui/page-container";
-import { Plus } from "lucide-react";
+import { auth } from "@/lib/auth";
 
-const ProductsPage = () => {
+import AddProductButton from "./components/add-product-button";
+
+const ProductsPage = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session?.user) {
+    redirect("/login");
+  }
   return (
     <PageContainer>
       <PageHeader>
@@ -19,10 +29,7 @@ const ProductsPage = () => {
           <PageDescription>Gerencie seus produtos</PageDescription>
         </PageHeaderContent>
         <PageActions>
-          <Button>
-            <Plus />
-            Adicionar Produto
-          </Button>
+          <AddProductButton />
         </PageActions>
       </PageHeader>
       <PageContent>

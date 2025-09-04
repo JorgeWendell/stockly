@@ -12,6 +12,12 @@ export const auth = betterAuth({
   }),
   user: {
     modelName: "UsersTable",
+    transform: (user: any) => {
+      console.log("=== AUTH TRANSFORM DEBUG ===");
+      console.log("User antes da transformação:", user);
+      console.log("User keys:", Object.keys(user));
+      return user;
+    },
   },
   session: {
     modelName: "sessionsTable",

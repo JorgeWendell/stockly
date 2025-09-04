@@ -10,7 +10,7 @@ import {
 
 // Enum para nível de acesso
 export const accessLevelEnum = pgEnum("access_level", [
-  "administrativo",
+  "administrador",
   "diretoria",
   "operador",
 ]);
