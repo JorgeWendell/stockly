@@ -34,6 +34,6 @@ export const auth = betterAuth({
   trustedOrigins: [
     "http://localhost:3000",
     "http://192.168.15.32:3000",
-    "http://stockly.adelbr.tech",
+    "http://stockly.adelbr.tech:3001",
   ],
 });
