@@ -31,5 +31,9 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: ["http://localhost:3000", "http://192.168.15.32:3000"],
+  trustedOrigins: [
+    "http://localhost:3000",
+    "http://192.168.15.32:3000",
+    "http://stockly.adelbr.tech",
+  ],
 });
