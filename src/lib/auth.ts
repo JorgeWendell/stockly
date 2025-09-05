@@ -11,7 +11,7 @@ export const auth = betterAuth({
     schema,
   }),
   user: {
-    modelName: "UsersTable",  
+    modelName: "UsersTable",
   },
   session: {
     modelName: "sessionsTable",
@@ -24,6 +24,13 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: false, // Desabilita verificação por email
   },
+  trustedOrigins: [
+    "http://localhost:3000",
+    "http://192.168.15.32:3000",
+    "http://stockly.adelbr.tech:3001",
+    "https://stockly.adelbr.tech:3001", // HTTPS também
+  ],
+  baseURL: "http://stockly.adelbr.tech:3001", // URL fixa para produção
 });
- 
