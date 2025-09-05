@@ -6,6 +6,10 @@ export function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/api/")) {
     const response = NextResponse.next();
 
+    // Debug log
+    console.log("Middleware CORS - URL:", request.url);
+    console.log("Middleware CORS - Origin:", request.headers.get("origin"));
+
     // Set CORS headers
     response.headers.set(
       "Access-Control-Allow-Origin",
