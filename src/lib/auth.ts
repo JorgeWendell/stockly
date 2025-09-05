@@ -11,13 +11,7 @@ export const auth = betterAuth({
     schema,
   }),
   user: {
-    modelName: "UsersTable",
-    transform: (user: { [key: string]: unknown }) => {
-      console.log("=== AUTH TRANSFORM DEBUG ===");
-      console.log("User antes da transformação:", user);
-      console.log("User keys:", Object.keys(user));
-      return user;
-    },
+    modelName: "UsersTable",  
   },
   session: {
     modelName: "sessionsTable",
@@ -31,14 +25,5 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: [
-    "http://localhost:3000",
-    "http://192.168.15.32:3000",
-    "http://stockly.adelbr.tech:3001",
-    "https://stockly.adelbr.tech:3001", // HTTPS também
-  ],
-  baseURL:
-    process.env.NODE_ENV === "production"
-      ? "http://stockly.adelbr.tech:3001"
-      : "http://localhost:3000",
 });
+ 
